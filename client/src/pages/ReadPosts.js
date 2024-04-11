@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Card from '../components/Card';
+import { supabase } from '../client'
 
 const ReadPosts = (props) => {
 
@@ -8,16 +9,28 @@ const ReadPosts = (props) => {
     useEffect(() => {
         setPosts(props.data);
     }, [props]);
-    
+
+    // READ all post from table
+    const fetchPosts = async () => {
+        const { data } = await supabase
+            .from('Posts')
+            .select();
+
+        // set state of posts
+        setPosts(data)
+    }
+
+    fetchPosts()
+
     return (
         <div className="ReadPosts">
             {
                 posts && posts.length > 0 ?
-                posts.map((post,index) => 
-                   <Card id={post.id} title={post.title} author={post.author} description={post.description}/>
-                ) : <h2>{'No Challenges Yet 😞'}</h2>
+                    posts.map((post, index) =>
+                        <Card id={post.id} title={post.title} author={post.author} description={post.description} />
+                    ) : <h2>{'No Challenges Yet 😞'}</h2>
             }
-        </div>  
+        </div>
     )
 }
 
